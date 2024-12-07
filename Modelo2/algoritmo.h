@@ -5,6 +5,8 @@
 #ifndef TP_ALGORITMO_H
 #define TP_ALGORITMO_H
 #define MAX_OBJ 1000		// Numero maximo de objectos
+#include "util.h"
+typedef struct dados dados;
 
 // EStrutura para armazenar parametros
 struct info
@@ -22,7 +24,7 @@ struct info
     // N�mero de objetos que se podem colocar na mochila
     int     numGenes;
     // Capacidade da mochila
-    int     capacity;
+    float     capacity;
     // N�mero de gera��es
     int     numGenerations;
 };
@@ -33,7 +35,7 @@ typedef struct individual chrom, *pchrom;
 struct individual
 {
     // Solu��o (objetos que est�o dentro da mochila)
-    int     p[MAX_OBJ];
+    int     *p;
     // Valor da qualidade da solu��o
     float   fitness;
     // 1 se for uma solu��o v�lida e 0 se n�o for
@@ -43,11 +45,13 @@ struct individual
 
 void tournament(pchrom pop, struct info d, pchrom parents);
 
-void genetic_operators(pchrom parents, struct info d, pchrom offspring);
+void genetic_operators(pchrom parents, struct info d, pchrom offspring, dados moedas);
 
-void crossover(pchrom parents, struct info d, pchrom offspring);
+void crossover(pchrom parents, struct info d, pchrom offspring, dados moedas);
 
-void mutation(pchrom offspring,struct info d);
+void mutation(pchrom offspring, struct info d, dados moedas);
+
+void repair_solution(int *genes, dados problema, int numGenes);
 
 
 #endif //TP_ALGORITMO_H

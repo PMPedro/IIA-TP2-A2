@@ -8,7 +8,7 @@
 #include "stdio.h"
 #include "algoritmo.h"
 #define TOLERANCIA 0.1
-void evaluate(pchrom pop, struct info d, int mat[][2]);
+void evaluate(pchrom pop, struct info d, float moedas[], float valorPagar);
 
 
 #endif //TP_FUNCAO_H

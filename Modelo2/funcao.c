@@ -7,45 +7,36 @@
 
 // Calcula a qualidade de uma solu��o
 //recebe as vals -> moedas existentes , vert -> nr de moedas que existem valor
-float eval_individual(int sol[], struct info d, int mat[][2], int *v)
-{
-    int     i;
-    float   sum_weight, sum_profit;
+float eval_individual(int sol[], struct info d, float moedas[], float valorPagar, int *valido) {
+    float soma_valores = 0.0;
+    int num_moedas = 0;
 
-    sum_weight = sum_profit = 0;
-    // Percorre todos os objectos
-    for (i=0; i < d.numGenes; i++)
-    {
-        // Verifica se o objecto i esta na mochila
-        if (sol[i] == 1)
-        {
-            // Actualiza o peso total
-            sum_weight += mat[i][0];
-            // Actualiza o lucro total
-            sum_profit += mat[i][1];
+    for (int i = 0; i < d.numGenes; i++) {
+        soma_valores += sol[i] * moedas[i];
+
+        if (sol[i] < 0) {
+            printf("Erro: Gene negativo detectado! sol[%d] = %d\n", i, sol[i]);
+            exit(1);
         }
+
+        num_moedas += sol[i];
     }
-    if (sum_weight > d.capacity)
-    {
-        // Solucao inv�lida
-        *v = 0;
-        return 0;
-    }
-    else
-    {
-        // Solucao v�lida
-        *v = 1;
-        return sum_profit;
+
+    if (fabs(soma_valores - valorPagar) <= 1e-2) {
+        *valido = 1;
+        return num_moedas; // Minimiza o número de moedas
+    } else {
+        *valido = 0;
+        return fabs(soma_valores - valorPagar) * 10 + num_moedas;
     }
 }
 
-// Avaliacao da popula��o
-// Par�metros de entrada: populacao (pop), estrutura com parametros (d) e matriz com dados do problema (mat)
-// Par�metros de sa�da: Preenche pop com os valores de fitness e de validade para cada solu��o
-void evaluate(pchrom pop, struct info d, int mat[][2])
-{
+void evaluate(pchrom pop, struct info d, float *moedas, float valorPagar) {
     int i;
 
-    for (i=0; i<d.popsize; i++)
-        pop[i].fitness = eval_individual(pop[i].p, d, mat, &pop[i].valido);
+    for (i = 0; i < d.popsize; i++) {
+        int valido;
+        pop[i].fitness = eval_individual(pop[i].p, d, moedas, valorPagar, &valido);
+        pop[i].valido = valido;
+    }
 }
